@@ -1,7 +1,7 @@
-//Previo 6
+//Práctica 6
 //Rosales Carrillo Sandra Lucero
 //320296769
-//Fecha de entrega: 20 de Septiembre de 2026
+//Fecha de entrega: 25 de Septiembre de 2026
 
 // Std. Includes
 #include <string>
@@ -101,10 +101,18 @@ int main( )
     // Load models
 
     Model dog((char*)"Models/Reddog.obj");
-     Model stitch((char*)"Models/stich_LP.obj");
-    glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
+     Model speaker((char*)"Models/p6/speaker/Speaker_KRK_classic5.obj");
+     Model drums((char*)"Models/p6/drums/drums.obj");
+     Model floor((char*)"Models/p6/floor/table.obj");
+     Model curtain((char*)"Models/p6/curtain/wall.obj");
+     Model microphone((char*)"Models/p6/microphone/MicroPhone.obj");
+     Model guitar((char*)"Models/p6/guitar/Guitar_Blue.obj"); 
+     Model soporte((char*)"Models/p6/soporte/lc_tube.obj"); 
+
+   
+         glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
     
-  
+    
 
     // Game loop
     while (!glfwWindowShouldClose(window))
@@ -131,21 +139,69 @@ int main( )
 
         // Draw the loaded model
         glm::mat4 model(1);
-        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        stitch.Draw(shader);
-
-        model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));     
         dog.Draw(shader);
 
-        model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-0.7f, 0.0f,-0.1));
+        model = glm::scale(model, glm::vec3(1.0F,1.0f, 1.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         dog.Draw(shader);
+     
 
+        model = glm::mat4(1.0f);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.5f, -0.3f, -0.8f));
+        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        speaker.Draw(shader);
 
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-0.5f, -0.3f, -0.8f));
+        model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        speaker.Draw(shader);
 
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -1.2f, 0.2f));
+        model = glm::scale(model, glm::vec3(0.04f, 0.04f, 0.07f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        floor.Draw(shader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-0.9f, -0.3f, 0.3f));
+        model = glm::rotate(model, glm::radians(40.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(55.0f, 55.0f, 55.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        guitar.Draw(shader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -0.4f, 1.5f));
+        model = glm::scale(model, glm::vec3(0.007f, 0.005f, 0.007f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        soporte.Draw(shader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-0.02f, 0.11f, 1.5f));
+        model = glm::scale(model, glm::vec3(0.7f, 0.7f, 0.7f));
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        microphone.Draw(shader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -0.5f, 1.3f));
+        model = glm::scale(model, glm::vec3(0.15f, 0.15f, 0.15f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        drums.Draw(shader);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, -0.7f, -1.2f));
+        model = glm::scale(model, glm::vec3(0.007f, 0.007f, 0.007f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        curtain.Draw(shader);
+
+     
         // Swap the buffers
         glfwSwapBuffers( window );
     }
@@ -190,7 +246,7 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, GL_TRUE);
     }
     
-    if ( key >= 0 && key < 1024 )
+    if ( key >= 0 && key < 1000 )
     {
         if ( action == GLFW_PRESS )
         {

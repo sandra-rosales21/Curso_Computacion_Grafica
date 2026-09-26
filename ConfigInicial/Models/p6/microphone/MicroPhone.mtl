@@ -1,0 +1,14 @@
+# Blender 4.2.4 LTS MTL File: 'MicroPhone.blend'
+# www.blender.org
+
+newmtl MicroPhone
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd MicroPhone_basecolor.png
+map_Ns MicroPhone_roughness.png
+map_refl MicroPhone_metallic.png
+map_d MicroPhone_opacity.png
+map_Bump -bm 1.000000 MicroPhone_normal.png

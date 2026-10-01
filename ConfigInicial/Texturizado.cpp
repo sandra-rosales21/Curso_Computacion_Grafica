@@ -1,8 +1,8 @@
 
-//Previo 7 
+//Práctica 7 
 //Rosales Carrillo Sandra Lucero
 //320296769
-//fecha de entrega: 27 de Septiembre de 2026
+//fecha de entrega: 2 de Octubre  2026
 #include <iostream>
 #include <cmath>
 
@@ -104,19 +104,54 @@ int main()
 	// Set up vertex data (and buffer(s)) and attribute pointers
 	GLfloat vertices[] =
 	{
-		// Positions            // Colors              // Texture Coords
-		-0.5f, -0.5f, 0.0f,    1.0f, 1.0f,1.0f,		0.0f,0.0f,
-		0.5f, -0.5f, 0.0f,	   1.0f, 1.0f,1.0f,		1.0f,0.0f,
-		0.5f,  0.5f, 0.0f,     1.0f, 1.0f,1.0f,	    1.0f,1.0f,
-		-0.5f,  0.5f, 0.0f,    1.0f, 1.0f,1.0f,		0.0f,1.0f,
+		//// Positions            // Colors              // Texture Coords
 
-		
+		//Frente
+		-0.5f, -0.5f, 0.5f,    1.0f, 1.0f,1.0f,		0.440f,0.440f,
+		0.5f, -0.5f, 0.5f,	   1.0f, 1.0f,1.0f,		0.580f,0.440f,
+		0.5f,  0.5f, 0.5f,     1.0f, 1.0f,1.0f,	    0.580f,0.580f,
+		-0.5f,  0.5f, 0.5f,    1.0f, 1.0f,1.0f,		0.440f,0.580f,
+
+		////Arriba
+		-0.5f,0.5f, 0.5f,     1.0f, 1.0f,1.0f,	    0.428f,0.605f,
+		0.5f, 0.5f, 0.5f,	   1.0f, 1.0f,1.0f,  	0.585f,0.605f,
+		0.5f,  0.5f, -0.5f,     1.0f, 1.0f,1.0f,	0.585f,0.745f,
+		-0.5f,  0.5f, -0.5f,    1.0f, 1.0f,1.0f,	0.428f,0.745f,
+
+		//Abajo
+		-0.5f, -0.5f, -0.5f,    1.0f, 1.0f,1.0f,	0.440f,0.270f,
+		0.5f, -0.5f, -0.5f,	   1.0f, 1.0f,1.0f,	0.580f,0.270f,
+		0.5f,  -0.5f, 0.5f,     1.0f, 1.0f,1.0f,    0.580f,0.420f,
+		-0.5f,  -0.5f, 0.5f,    1.0f, 1.0f,1.0f,	0.440f,0.420f,
+
+		//Atras
+		-0.5f, -0.5f, -0.5f,    1.0f, 1.0f,1.0f,		0.430f,0.100f,
+		0.5f, -0.5f, -0.5f,	   1.0f, 1.0f,1.0f,		0.570f,0.100f,
+		0.5f,  0.5f, -0.5f,     1.0f, 1.0f,1.0f,	    0.570f,0.252f,
+		-0.5f,  0.5f, -0.5f,    1.0f, 1.0f,1.0f,		0.430f,0.252f,
+
+		////Izquierda
+		-0.5f, -0.5f, -0.5f,    1.0f, 1.0f,1.0f,	0.280f,0.440f,
+		-0.5f, -0.5f, 0.5f,	   1.0f, 1.0f,1.0f,		0.425f,0.440f,
+		-0.5f,  0.5f, 0.5f,     1.0f, 1.0f,1.0f,	0.425f,0.580f,
+		-0.5f,  0.5f, -0.5f,    1.0f, 1.0f,1.0f,	0.280f,0.580f,
+
+		//Derecha
+		0.5f, -0.5f, 0.5f,    1.0f, 1.0f,1.0f,		0.600f,0.440f,
+		0.5f, -0.5f, -0.5f,	   1.0f, 1.0f,1.0f,		0.735f,0.440f,
+		0.5f,  0.5f, -0.5f,     1.0f, 1.0f,1.0f,	0.735f,0.580f,
+		0.5f,  0.5f, 0.5f,    1.0f, 1.0f,1.0f,		0.600f,0.580f,
 	};
 
 	GLuint indices[] =
 	{  // Note that we start from 0!
-		0,1,3,
-		1,2,3
+		0,1,3,  1,2,3,//frotal
+		4,5,7,   5,6,7,//arriba
+		8,9,11,   9,10,11,//abajo
+		12,13,15, 13,14,15,// derecha
+		16,17,19, 17,18,19,//izquierda
+		20,21,23,  21,22,23//derecha
+
 	
 	};
 
@@ -156,13 +191,13 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
 	// Diffuse map
-	image = stbi_load("images/pumpking.png", &textureWidth, &textureHeight, &nrChannels,0);
+	image = stbi_load("images/cubo1.jpg", &textureWidth, &textureHeight, &nrChannels,0);
 	glBindTexture(GL_TEXTURE_2D, texture1);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
 	if (image)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureWidth, textureHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -211,7 +246,7 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		// Draw the light object (using light's vertex attributes)
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
 		// Swap the screen buffers

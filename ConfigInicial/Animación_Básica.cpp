@@ -1,7 +1,7 @@
-//Previo10
+﻿//Práctica 10
 //Rosales Carrillo Sandra Lucero
 //320296769
-//Fecha de entrega: 18 de Octubre 2026
+//Fecha de entrega: 23 de Octubre 2026
 
 #include <iostream>
 #include <cmath>
@@ -104,20 +104,46 @@ float vertices[] = {
 
 
 glm::vec3 Light1 = glm::vec3(0);
-//Anim
-float rotBall = -1.5;
+//Animación 
+
+//Peroo
+float anguloPerro = 0.0f;    
+bool  AnimPerro = false;    
+float radioPerro = 1.5f;     
+float alturaPerro = 0.0f;       
+float tiempoBrinco = 0.0f;
+float duracionBrinco = 0.3f;     // qué tan rápido brinca
+float alturaBrinco = 0.8f;       // qué tan alto brinca
+bool  brincoActivo = false;
+bool cruceAnteriorPerro = false;
+
+//Pelota
+
+float anguloBall = 0.0f;
+float rotBall = 1.5f;
 bool AnimBall = false; 
+bool AnimPelota = false;
+float radioPelota = 1.0f;
+float alturaBase = 0.0f;
+float alturaPelota = 0.7f;      // offset en Y actual
+float tiempoOnda = 0.5f;        // tiempo transcurrido de la onda
+float duracionOnda = 2.25f;      // segundos que dura la onda completa
+bool  ondaActiva = false;       // controla si la onda está corriendo
+float alturaMinima = 0.3f;      // a la altura del perro (piso)
+bool cruceAnteriorPelota = false;
+float alturaMaxPelota = 1.0f;   // qué tan alto sube tras el golpe
 
-//Valores m�ximos y minimo de la animaci�n 
+glm::vec3 puntoSaltoPerro1 = glm::vec3(1.5f, 0.0f, 0.0f);  // perro a la derecha
+glm::vec3 puntoSaltoPerro2 = glm::vec3(-1.5f, 0.0f, 0.0f);  // perro a la izquierd
 
-float ballyMin = 0.0;
-float ballyMax = 2.0;
+glm::vec3 puntoBajadaPelota1 = glm::vec3(1.0f, 0.0f, 0.0f);  // perro a la derecha
+glm::vec3 puntoBajadaPelota2 = glm::vec3(-1.0f, 0.0f, 0.0f);
 
 
 // Deltatime
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
 GLfloat lastFrame = 0.0f;  	// Time of last frame
-
+ 
 int main()
 {
 	// Init GLFW
@@ -290,26 +316,40 @@ int main()
 	
 		
 		//Carga de modelo 
+	 
+		
+		
         view = camera.GetViewMatrix();	
 		model = glm::mat4(1);
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Piso.Draw(lightingShader);
-
+		
+		//PERRO
 		model = glm::mat4(1);
+		glm::vec4 offset = glm::vec4(radioPerro, 0.0f, 0.0f, 1.0f);
+		glm::mat4 rotacion = glm::rotate(glm::mat4(1.0f), anguloPerro, glm::vec3(0.0f, 1.0f, 0.0f));
+		offset = rotacion * offset;
+		offset.y = alturaPerro;
+		model = glm::translate(model, glm::vec3(offset));
+		model = glm::rotate(model, anguloPerro + glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//model = glm::rotate(model, glm::radians(rotBall), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
 		Dog.Draw(lightingShader);
 
+
+		//PELOTA
 		model = glm::mat4(1);
-		glEnable(GL_BLEND);//Avtiva la funcionalidad para trabajar el canal alfa
+		glEnable(GL_BLEND);//Activa la funcionalidad para trabajar el canal alfa
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 1);
+
 		
-		float centro = (ballyMin + ballyMax) * 0.5f;
-		float amplitud = (ballyMax - ballyMin) * 0.5f;
-		float ballY = centro + amplitud * sin(rotBall);
-		model = glm::translate(model, glm::vec3(0.0f, ballY, 0.0f));
+		glm::vec4 offsetPelota = glm::vec4(radioPelota, 0.0f, 0.0f, 1.0f);
+		glm::mat4 rotacionPelota = glm::rotate(glm::mat4(1.0f), anguloBall, glm::vec3(0.0f, 1.0f, 0.0f));
+		offsetPelota = rotacionPelota * offsetPelota;
+		offsetPelota.y = alturaPelota; //Movimiento de la pelota en Y 
+		model = glm::translate(model, glm::vec3(offsetPelota));
+		model = glm::rotate(model, anguloBall + glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		//model = glm::rotate(model, glm::radians(rotBall), glm::vec3(1.0f, 0.0f, 0.0f));
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 	    Ball.Draw(lightingShader); 
@@ -419,7 +459,7 @@ void DoMovement()
 }
 
 // Is called whenever a key is pressed/released via GLFW
-void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode)
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (GLFW_KEY_ESCAPE == key && GLFW_PRESS == action)
 	{
@@ -444,7 +484,7 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 		if (active)
 		{
 			Light1 = glm::vec3(1.0f, 1.0f, 0.0f);
-			
+
 		}
 		else
 		{
@@ -453,23 +493,99 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 	}
 	if (keys[GLFW_KEY_N])
 	{
-		AnimBall = !AnimBall;
-		
+		AnimPelota = !AnimPelota;
+
 	}
-}
-void Animation() {
-	if (AnimBall)
+	if (keys[GLFW_KEY_N])
 	{
-		rotBall += 0.005f;
-		//printf("%f", rotBall);
-	}
-	else
-	{
-		//rotBall = 0.0f;
+		AnimPerro = !AnimPerro;
+
 	}
 }
 
-void MouseCallback(GLFWwindow *window, double xPos, double yPos)
+glm::vec3 posicionPerro()
+{
+	glm::vec4 offset = glm::vec4(radioPerro, 0.0f, 0.0f, 1.0f);
+	glm::mat4 rot = glm::rotate(glm::mat4(1.0f), anguloPerro, glm::vec3(0.0f, 1.0f, 0.0f));
+	offset = rot * offset;
+	return glm::vec3(offset);
+}
+
+glm::vec3 posicionPelota()
+{
+	glm::vec4 offset = glm::vec4(radioPelota, 0.0f, 0.0f, 1.0f);
+	glm::mat4 rot = glm::rotate(glm::mat4(1.0f), anguloBall, glm::vec3(0.0f, 1.0f, 0.0f));
+	offset = rot * offset;
+	return glm::vec3(offset.x, 0.0f, offset.z);   // ignoramos Y
+}
+
+void Animation()
+{
+	if (AnimBall)
+		rotBall += 0.0019f;
+
+	if (AnimPerro)
+		anguloPerro += 0.002f;
+
+	if (AnimPelota)
+		anguloBall -= 0.002f;
+
+	glm::vec3 pPerro = posicionPerro();
+	glm::vec3 pPelota = posicionPelota();
+	float tolerancia = 0.3f;   // qué tan cerca del punto del que va a moverse 
+	bool perroCerca = glm::distance(pPerro, puntoSaltoPerro1) < tolerancia ||
+		glm::distance(pPerro, puntoSaltoPerro2) < tolerancia;
+
+	bool pelotaCerca = glm::distance(pPelota, puntoBajadaPelota1) < tolerancia ||
+		glm::distance(pPelota, puntoBajadaPelota2) < tolerancia;
+
+	if (perroCerca && !cruceAnteriorPerro && !brincoActivo)
+	{
+		brincoActivo = true;
+		tiempoBrinco = 0.0f;
+	}
+	cruceAnteriorPerro = perroCerca;
+	if (pelotaCerca && !cruceAnteriorPelota && !ondaActiva)
+	{
+		ondaActiva = true;
+		tiempoOnda = 0.0f;
+	}
+	cruceAnteriorPelota = pelotaCerca;
+
+	if (brincoActivo)
+	{
+		tiempoBrinco += deltaTime;
+		float t = tiempoBrinco / duracionBrinco;   // 0 → 1
+
+		if (t >= 1.0f)
+		{
+			alturaPerro = 0.0f;
+			brincoActivo = false;
+		}
+		else
+		{
+			alturaPerro = alturaBrinco * 4.0f * t * (1.0f - t);  // 0 → 1 → 0
+		}
+	}
+	if (ondaActiva)
+	{
+		tiempoOnda += deltaTime;
+		float t = tiempoOnda / duracionOnda;
+
+		if (t >= 1.0f)
+		{
+			alturaPelota = alturaBase;
+			ondaActiva = false;
+			tiempoOnda = 0.0f;
+		}
+		else
+		{
+			float factor = 4.0f * t * (1.0f - t);   // 0 → 1 → 0
+			alturaPelota = alturaBase + (alturaMaxPelota - alturaBase) * factor;
+		}
+	}
+}
+void MouseCallback(GLFWwindow* window, double xPos, double yPos)
 {
 	if (firstMouse)
 	{

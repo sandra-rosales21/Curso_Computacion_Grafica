@@ -1,7 +1,7 @@
-﻿//Previo 11
+﻿//Práctica 11
 //Rosales Carillo Sandra Lucero
 //320296769
-//fecha de entrega: 25 de Octubre 2026
+//fecha de entrega: 30 de Octubre 2026
 #include <iostream>
 #include <cmath>
 
@@ -508,13 +508,34 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 		dogAnim = 1;
 
 	}
-	if (keys[GLFW_KEY_O])
-	{
-		dogPos = glm::vec3(0.0f, 0.0f, 0.0f); // Regresa a las coordenadas 0,0,0
-		dogRot = 0.0f;                        
+
+}
+void EstadoReposo() {
+	RLegs = 0.0f;
+	FLegs = 0.0f;
+	head = 0.0f;
+	tail = 0.0f;
+}
+void CaminarPerro() {
+	if (!step) { // State 1
+		RLegs += 0.3f;
+		FLegs += 0.3f;
+		head += 0.3f;
+		tail += 0.4f;
+
+		if (RLegs > 15.0f) step = true;
+	}
+	else { // State 2
+		RLegs -= 0.3f;
+		FLegs -= 0.3f;
+		head -= 0.3f;
+		tail -= 0.4f;
+
+		if (RLegs < -15.0f) step = false;
 	}
 }
 void Animation() {
+
 	if (AnimBall)
 	{
 		rotBall += 0.4f;
@@ -523,54 +544,158 @@ void Animation() {
 
 	if (AnimDog)
 	{
-		rotDog -= 0.6f;
+		rotDog -= 0.2f;
 		//printf("%f", rotBall);
 	}
 
+	//ESTADO 1 frente en Z
 	if (dogAnim == 1)//Caminar
 	{
 		if (dogPos.z >= 2.2f)
 		{
-			dogAnim = 0; // Apagamos la animación de caminar
-			//dogPos.z = 2.2f;
-			RLegs = 0.0f;      // Regresar patas a reposo
-			FLegs = 0.0f;
-			head = 0.0f;
-			tail = 0.0f;
+			dogAnim = 2; // Apagamos la animación de caminar
+			EstadoReposo();
+
 		}
 		else
 		{
-			if (!step) {
-				//Sate 1
-				RLegs += 0.3f;
-				FLegs += 0.3f;
-				head += 0.3f;
-				tail += 0.4;
-
-				if (RLegs > 15.0f) { //Condición para detenerse
-					step = true;
-				}
-
-			}
-			else
-			{    //Sate 1
-				RLegs -= 0.3f;
-				FLegs -= 0.3f;
-				head -= 0.3f;
-				tail -= 0.4;
-				if (RLegs < -15.0f) { //Condición para detenerse
-					step = false;
-				}
-
-			}
+			CaminarPerro();
 			dogPos.z += 0.001;
-	
+
+		}
+	}
+	//ESTADO 2 giro a la derecha 
+	else if (dogAnim == 2) // Estado de giro a la derecha 
+	{
+		head = 15.0f;
+		dogRot += 0.2f;
+		CaminarPerro();
+		if (dogRot >= 90.0f)
+		{
+			dogRot = 90.0f;
+			head = 0.0f;
+			dogAnim = 3;     //Estado 3 caminar en X 
+		}
+	}
+
+	//Estado 3 caminar en X 
+	else if (dogAnim == 3)
+	{
+		if (dogPos.x >= 2.2f)
+		{
+			dogAnim = 4; //	Pasar al siguiente estado 
+			EstadoReposo();
+
+		}
+		else
+		{
+			CaminarPerro();
+			dogPos.x += 0.001;
+
 		}
 
+	}
+	//Estado 4 giro a la derecha hacia Z
+	else if (dogAnim == 4) // Estado de giro a la derecha 
+	{
+		head = 15.0f;
+		dogRot += 0.2f;
+		CaminarPerro();
+		if (dogRot >= 180.0f)
+		{
+			dogRot = 180.0f;
+			head = 0.0f;
+			dogAnim = 5;     //Estado 3 caminar en X 
+		}
+	}
+	//Estado 5 caminar en -z 
+	else if (dogAnim == 5)
+	{
+		if (dogPos.z <= -2.2f)
+		{
+			dogAnim = 6; //	Pasar al siguiente estado 
+			EstadoReposo();
 
+		}
+		else
+		{
+			CaminarPerro();
+			dogPos.z -= 0.001;
+
+		}
 
 	}
-}
+	//Estado 6 giro a la derecha en -x 
+	else if (dogAnim == 6) // Estado de giro a la derecha 
+	{
+		head = 15.0f;
+		dogRot += 0.2f;
+		CaminarPerro();
+		if (dogRot >= 270.0f)
+		{
+			dogRot = 270.0f;
+			head = 0.0f;
+			dogAnim = 7;
+		}
+	}
+	//Estado 7 caminar en -x 
+	else if (dogAnim == 7)
+	{
+		if (dogPos.x <= -2.2f)
+		{
+			dogAnim = 8; //	Pasar al siguiente estado 
+			EstadoReposo();
+
+		}
+		else
+		{
+			CaminarPerro();
+			dogPos.x -= 0.001;
+
+		}
+
+	}
+	//Estado 8 giro al centro
+	else if (dogAnim == 8) // Estado de giro a la derecha 
+	{
+		head = 15.0f;
+		dogRot += 0.2f;
+		CaminarPerro();
+		if (dogRot >= 405.0f)
+		{
+			dogRot = 405.0f;
+			head = 0.0f;
+			dogAnim = 9;
+		}
+	}
+	//Estado 9 caminar hacia el centro
+	else if (dogAnim == 9)
+	{
+		if (dogPos.x >= 0.0f && dogPos.z >= 0.0f)
+		{
+			dogPos.x = 0.0f;
+			dogPos.z = 0.0f;
+			dogAnim = 10;
+			EstadoReposo();
+		}
+		else
+		{
+			CaminarPerro(); 
+			dogPos.x += 0.001f; 
+			dogPos.z += 0.001f; 
+		}
+
+	}
+	//Estado 10 regresar al centro y  regresar al estado 1 
+	else if (dogAnim == 10)
+	{
+		dogPos = glm::vec3(0.0f, 0.0f, 0.0f); // Lo regresa al origen
+		dogRot = 0.0f;                        //Queda al centro
+		head = 0.0f;                          // Cabeza al centro
+		CaminarPerro();
+		dogAnim = 1;
+	}
+} 
 
 	void MouseCallback(GLFWwindow * window, double xPos, double yPos)
 	{
